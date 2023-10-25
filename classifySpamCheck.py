@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
@@ -18,6 +20,10 @@ def aucCV(features, labels):
 
 def predictTest(trainFeatures, trainLabels, testFeatures):
     imputer = SimpleImputer(missing_values=-1, strategy='mean')
+
+    # scaler = MinMaxScaler()
+    # scaler.fit(trainFeatures)
+
     estimator = GradientBoostingClassifier(n_estimators=7)
     classifier = AdaBoostClassifier(estimator=estimator, n_estimators=31, learning_rate=0.92, random_state=42)
     model = make_pipeline(imputer, classifier)
