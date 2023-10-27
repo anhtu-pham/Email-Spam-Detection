@@ -1,9 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_val_score
@@ -11,26 +10,27 @@ from sklearn.metrics import roc_auc_score
 
 def aucCV(features, labels):
     
-    imputer = SimpleImputer(missing_values=-1, strategy='mean')
-    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
     columns_to_drop = [1, 5, 11, 12, 13, 14, 17, 20, 23, 24]
     column_transformer = ColumnTransformer(
         transformers=[('drop_columns', 'drop', columns_to_drop)],
         remainder='passthrough'
     )
+    imputer = SimpleImputer(missing_values=-1, strategy='mean')
+    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
+
     model = make_pipeline(column_transformer, imputer, classifier)
     scores = cross_val_score(model, features, labels, cv=10, scoring='roc_auc')
     return scores
 
 def predictTest(trainFeatures, trainLabels, testFeatures):
 
-    imputer = SimpleImputer(missing_values=-1, strategy='mean')
-    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
     columns_to_drop = [1, 5, 11, 12, 13, 14, 17, 20, 23, 24]
     column_transformer = ColumnTransformer(
         transformers=[('drop_columns', 'drop', columns_to_drop)],
         remainder='passthrough'
     )
+    imputer = SimpleImputer(missing_values=-1, strategy='mean')
+    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
 
     model = make_pipeline(column_transformer, imputer, classifier)
     model.fit(trainFeatures, trainLabels)
