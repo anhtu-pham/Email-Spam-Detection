@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
@@ -11,22 +10,29 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import roc_auc_score
 
 def aucCV(features, labels):
+    
     imputer = SimpleImputer(missing_values=-1, strategy='mean')
-    estimator = GradientBoostingClassifier(n_estimators=7)
-    classifier = AdaBoostClassifier(estimator=estimator, n_estimators=31, learning_rate=0.92, random_state=42)
-    model = make_pipeline(imputer, classifier)
+    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
+    columns_to_drop = [1, 5, 11, 12, 13, 14, 17, 20, 23, 24]
+    column_transformer = ColumnTransformer(
+        transformers=[('drop_columns', 'drop', columns_to_drop)],
+        remainder='passthrough'
+    )
+    model = make_pipeline(column_transformer, imputer, classifier)
     scores = cross_val_score(model, features, labels, cv=10, scoring='roc_auc')
     return scores
 
 def predictTest(trainFeatures, trainLabels, testFeatures):
+
     imputer = SimpleImputer(missing_values=-1, strategy='mean')
+    classifier = AdaBoostClassifier(n_estimators=31, learning_rate=0.92, random_state=42)
+    columns_to_drop = [1, 5, 11, 12, 13, 14, 17, 20, 23, 24]
+    column_transformer = ColumnTransformer(
+        transformers=[('drop_columns', 'drop', columns_to_drop)],
+        remainder='passthrough'
+    )
 
-    # scaler = MinMaxScaler()
-    # scaler.fit(trainFeatures)
-
-    estimator = GradientBoostingClassifier(n_estimators=7)
-    classifier = AdaBoostClassifier(estimator=estimator, n_estimators=31, learning_rate=0.92, random_state=42)
-    model = make_pipeline(imputer, classifier)
+    model = make_pipeline(column_transformer, imputer, classifier)
     model.fit(trainFeatures, trainLabels)
     predictedTestLabels = model.predict_proba(testFeatures)[:, 1]
     return predictedTestLabels
