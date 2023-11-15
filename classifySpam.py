@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_val_score
@@ -40,8 +41,8 @@ def predictTest(trainFeatures, trainLabels, testFeatures):
 if __name__ == "__main__":
 
     np.random.seed(42)
-    data1 = np.loadtxt("spamTrain1.csv", delimiter=',')
-    data2 = np.loadtxt("spamTrain2.csv", delimiter=',')
+    data1 = np.loadtxt("data1.csv", delimiter=',')
+    data2 = np.loadtxt("data2.csv", delimiter=',')
     data = np.vstack((data1, data2))
     shuffleIndex = np.arange(np.shape(data)[0])
     np.random.shuffle(shuffleIndex)
@@ -51,7 +52,7 @@ if __name__ == "__main__":
 
     print("The 10-fold cross-validation mean AUC is", np.mean(aucCV(features, labels)))
 
-    trainFeatures, testFeatures, trainLabels, testLabels = train_test_split(features, labels, test_size=0.5, random_state=42)
+    trainFeatures, testFeatures, trainLabels, testLabels = train_test_split(features, labels, test_size=0.4, random_state=42)
     predictedTestLabels = predictTest(trainFeatures, trainLabels, testFeatures)
     print("The AUC for test set is", roc_auc_score(testLabels, predictedTestLabels))
 

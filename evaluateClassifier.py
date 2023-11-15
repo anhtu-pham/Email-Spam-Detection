@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score,roc_curve
-from classifySpamCheck import predictTest
+from classifySpam import predictTest
 
 desiredFPR = 0.01
 
@@ -17,8 +17,10 @@ def tprAtFPR(labels,outputs,desiredFPR):
     tprAt = (tprAbove - tprBelow) / (fprAbove-fprBelow) * (desiredFPR - fprBelow) + tprBelow
     return tprAt, fpr, tpr
 
-trainData = np.loadtxt('spamTrain1.csv', delimiter=',')
-testData = np.loadtxt('spamTrain2.csv', delimiter=',')
+data1 = np.loadtxt('data1.csv', delimiter=',')
+data2 = np.loadtxt('data2.csv', delimiter=',')
+trainData = np.vstack((data1, data2))
+testData = np.loadtxt('testData.csv', delimiter=',')
 
 # Randomly shuffle rows of training and test sets, then separate labels
 shuffleIndex = np.arange(np.shape(trainData)[0])
